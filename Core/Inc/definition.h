@@ -3,7 +3,7 @@
 
 
 #define __DEBUG__       1
-#define __CRC__         0
+#define __CRC__         1
 #define __FUZZY__       0
 
 /********************************************************************************
@@ -32,8 +32,8 @@
 *********************************************************************************/
 #define BASE_DIAMETER (0.73)
 #define WHEEL_DIAMETER (0.13)
-#define MAXIMUM_VELOCITY (2.0)
-#define MAXIMUM_OMEGA (2.0)
+#define MAXIMUM_VELOCITY (1.0)
+#define MAXIMUM_OMEGA (1.5)
 
 
 /********************************************************************************
