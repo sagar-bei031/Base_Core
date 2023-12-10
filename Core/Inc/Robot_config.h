@@ -1,3 +1,12 @@
+/**
+ ******************************************************************************
+ * @file    Robot_config.h
+ * @brief   Header file conting Robot controller configuration.
+ * @author  Robotics Team 2024, IOE Pulchowk Campus
+ * @date    2023
+ ******************************************************************************
+ */
+
 #ifndef ROBOT_CONFIG_H__
 #define ROBOT_CONFIG_H__
 

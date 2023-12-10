@@ -1,37 +1,35 @@
+/**
+ ******************************************************************************
+ * @file    Robot_main.c
+ * @brief   Implementation for Robot.h
+ * @author  Robotics Team 2024, IOE Pulchowk Campus
+ * @date    2023
+ ******************************************************************************
+ */
+
 #include "Robot_main.h"
-#include "Robot_config.h"
 #include "Robot.hpp"
 #include "usart.h"
 
 // #define __COUNT__
 
+/* Create main implementing object for Robot */
 Robot robot;
 
-int Robot_main()
+/**
+ * @brief Main function for Robot to be linked in main.c file.
+ *
+ */
+void Robot_main()
 {
-    init_robot();
-    operate_robot();
-
-    return 0;
-}
-
-void init_robot()
-{
-    HAL_Delay(20);
+    /* Initialize every object and parameter of the robot system. */
     robot.init();
-}
 
-void operate_robot()
-{
-    HAL_Delay(20);
-
+    /* Infinitely operate robot for gaming */
     while (1)
     {
-        if ((HAL_GetTick() - robot.motor_loop) < MOTOR_LOOP_TIME)
-            continue;
-        robot.run();
-
-        robot.motor_loop = HAL_GetTick();
+        /* Run robot continuosly */
+            robot.run();
     }
 }
 
@@ -39,8 +37,10 @@ void operate_robot()
 int32_t odata[3];
 #endif
 
+/* Handle UART Callbacks */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    /* Flush the UART Data register */
     __HAL_UART_FLUSH_DRREGISTER(huart);
 
     if (huart->Instance == robot.joystick.huart->Instance)

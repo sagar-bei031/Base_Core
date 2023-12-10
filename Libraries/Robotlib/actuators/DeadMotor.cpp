@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include "Robotlib/maths/math.hpp"
 
-const float kp[4] = {0.5, 1.2, 0.4, 0.4};
+const float kp[4] = {0.5, 0.8, 0.4, 0.4};
 const float ki[4] = {15.0, 20.0, 15.0, 10.5};
-const float kd[4] = {0.001, 0.0005, 0.0005, 0.0005};
+const float kd[4] = {0.0001, 0.0001, 0.0001, 0.0001};
 const float pid_output_to_speed_factors[4] = {56.52f, 72.22f, 55.89, 52.75f};
 const float cpr = 1000;
 
@@ -16,7 +16,7 @@ const float pos_pid_limit = 1.0f; // full speed when greater or equal to 5m
 const float theta_kp = 5.0;
 const float theta_ki = 0.0;
 const float theta_kd = 0.000;
-const float theta_pid_limit = PI/6.0f;
+const float theta_pid_limit = PI;
 
 void DeadMotor::init()
 {
@@ -97,73 +97,73 @@ void DeadMotor::run()
                 base_motor_encoders[i].reset_encoder_count();
             }
         }
-        // printf("\n");
+        printf("\n");
 
         motor_loop = HAL_GetTick();
     }
 }
 
-float xVel = 0, yVel = 0, newOmega = 0;
-void DeadMotor::maintainCoordinates()
-{
+// float xVel = 0, yVel = 0, newOmega = 0;
+// void DeadMotor::maintainCoordinates()
+// {
     
-    theta_pid.Input = round4(odom.theta);
-    theta_pid.Setpoint = odom_setpoint.theta;
-    if (theta_pid.Compute())
-    {
-        newOmega = theta_pid.Output / pos_pid_limit * MAXIMUM_OMEGA;
-    }
+//     theta_pid.Input = round4(odom.theta);
+//     theta_pid.Setpoint = odom_setpoint.theta;
+//     if (theta_pid.Compute())
+//     {
+//         newOmega = theta_pid.Output / pos_pid_limit * MAXIMUM_OMEGA;
+//     }
 
-    x_pid.Input = round3(odom.x);
-    x_pid.Setpoint = odom_setpoint.x;
-    if (x_pid.Compute())
-    {
-        xVel = x_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
-    }
+//     x_pid.Input = round3(odom.x);
+//     x_pid.Setpoint = odom_setpoint.x;
+//     if (x_pid.Compute())
+//     {
+//         xVel = x_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
+//     }
 
-    y_pid.Input = round3(odom.y);
-    y_pid.Setpoint = odom_setpoint.y;
-    if (y_pid.Compute())
-    {
-        yVel = y_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
-    }
+//     y_pid.Input = round3(odom.y);
+//     y_pid.Setpoint = odom_setpoint.y;
+//     if (y_pid.Compute())
+//     {
+//         yVel = y_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
+//     }
 
-    base_twist = Twist(xVel, yVel, newOmega);
+//     base_twist = Twist(xVel, yVel, newOmega);
 
-    run();
-}
+//     run();
+// }
 
-void DeadMotor::changeCoordinates(float x, float y, float theta)
-{
-    odom_setpoint.x = x;
-    odom_setpoint.y = y;
-    odom_setpoint.theta = theta;
-}
+// void DeadMotor::changeCoordinates(float x, float y, float theta)
+// {
+//     odom_setpoint.x = x;
+//     odom_setpoint.y = y;
+//     odom_setpoint.theta = theta;
+// }
 
-void DeadMotor::changeTheta(float newTheta)
-{
-    odom_setpoint.theta = newTheta;
-    if (odom_setpoint.theta > M_PI)
-    {
-        odom_setpoint.theta -= 2 * M_PI;
-    }
-    else if (odom_setpoint.theta < (-M_PI))
-    {
-        odom_setpoint.theta += 2 * M_PI;
-    }
+// void DeadMotor::changeTheta(float newTheta)
+// {
+//     odom_setpoint.theta = newTheta;
+//     if (odom_setpoint.theta > M_PI)
+//     {
+//         odom_setpoint.theta -= 2 * M_PI;
+//     }
+//     else if (odom_setpoint.theta < (-M_PI))
+//     {
+//         odom_setpoint.theta += 2 * M_PI;
+//     }
 
-    odom_setpoint.theta = round3(odom_setpoint.theta);
-}
+//     odom_setpoint.theta = round3(odom_setpoint.theta);
+// }
 
-void DeadMotor::stop()
-{
-    base_twist = Twist(0, 0, 0);
-}
+// void DeadMotor::stop()
+// {
+//     base_twist = Twist(0, 0, 0);
+// }
 
-void DeadMotor::hardBreak()
-{
-    for (int i = 0; i < 4; i++)
-    {
-        base_motors[i].set_speed(0.0);
-    }
-}
+// void DeadMotor::hardBreak()
+// {
+//     for (int i = 0; i < 4; i++)
+//     {
+//         base_motors[i].set_speed(0.0);
+//     }
+// }

@@ -78,7 +78,7 @@ Libraries/Robotlib/controllers/pid.cpp \
 Libraries/Robotlib/controllers/fuzzy_pid.cpp \
 Libraries/Robotlib/sensors/encoder.cpp \
 Base-0.1-Init/Libraries/Robotlib/communication/uart.cpp \
-Libraries/Robotlib/actuators/DeadMotor.cpp
+Libraries/Robotlib/actuators/DeadMotor.cpp 
 
 
 #######################################
