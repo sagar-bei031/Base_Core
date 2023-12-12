@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include "Robotlib/maths/math.hpp"
 
-const float kp[4] = {0.5, 0.8, 0.4, 0.4};
-const float ki[4] = {15.0, 20.0, 15.0, 10.5};
-const float kd[4] = {0.0001, 0.0001, 0.0001, 0.0001};
-const float pid_output_to_speed_factors[4] = {56.52f, 72.22f, 55.89, 52.75f};
+const float kp[4] = {0.5f, 0.5f, 0.5f, 0.5f};
+const float ki[4] = {15.0f, 15.0f, 15.0f, 10.5f};
+const float kd[4] = {0.0001f, 0.0001f, 0.0001f, 0.0001f};
+
+const float desired_max_motor_omega = 50.0f; // Lies on linear region of all motor
+const float pwm_for_desired_max_motor_omega[4] = {0.45f, 0.66f, 0.84f, 0.45f};
 const float cpr = 1000;
 
 const float pos_kp = 5.0f;
@@ -42,7 +44,7 @@ void DeadMotor::init()
         base_motor_pid_controllers[i] = PID(1.0, 0.0, 0.0, P_ON_E, DIRECT);
 
         base_motor_pid_controllers[i].Init();
-        base_motor_pid_controllers[i].SetOutputLimits(-pid_output_to_speed_factors[i], pid_output_to_speed_factors[i]);
+        base_motor_pid_controllers[i].SetOutputLimits(-desired_max_motor_omega, desired_max_motor_omega);
         base_motor_pid_controllers[i].SetTunings(kp[i], ki[i], kd[i]);
         base_motor_pid_controllers[i].SetSampleTime(MOTOR_LOOP_TIME);
         base_motor_pid_controllers[i].SetMode(AUTOMATIC);
@@ -92,12 +94,12 @@ void DeadMotor::run()
 
             if (base_motor_pid_controllers[i].Compute())
             {
-                base_motors[i].set_speed(base_motor_pid_controllers[i].Output / pid_output_to_speed_factors[i]);
+                base_motors[i].set_speed(base_motor_pid_controllers[i].Output / desired_max_motor_omega * pwm_for_desired_max_motor_omega[i]);
                 //  base_motors[i].set_speed(motor_omegas[i]/100);
                 base_motor_encoders[i].reset_encoder_count();
             }
         }
-        printf("\n");
+        // printf("\n");
 
         motor_loop = HAL_GetTick();
     }

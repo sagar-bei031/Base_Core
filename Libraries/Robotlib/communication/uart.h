@@ -7,6 +7,9 @@
 #include <stdio.h>
 
 #define UART_START_BYTE (0xA5)
+#define UART_RECEVING_MAX_DATA_SIZE 14
+#define UART_TRANSMITTING_MAX_DATA_SIZE 1
+
 enum UARTReceiveByteStatus
 {
   WAITING_FOR_START_BYTE,
@@ -49,10 +52,10 @@ public:
   uint8_t first_byte = 0, rem_byte = 0;
 
   // store UART data from dma
-  uint8_t receiving_data_dma[14];
+  uint8_t receiving_data_dma[UART_RECEVING_MAX_DATA_SIZE+1];
 
   // array of sending bytes to send data to upper part
-  uint8_t transmission_data[3];
+  uint8_t transmission_data[UART_TRANSMITTING_MAX_DATA_SIZE+3];
 
   uint8_t r_size, t_size;
 

@@ -15,9 +15,38 @@
 #include "Robot_config.h"
 #include "Robotlib/actuators/DeadMotor.hpp"
 #include "Robotlib/communication/uart.h"
-#include "Robotlib/communication/uart_hs.hpp"
 
 #define ROBOT_LOOP_TIME 10
+
+/******************************************************************************
+ * Joystick data structure
+ * 
+ * There are ten bytes in a packet of control data.
+ * First byte is start byte.
+ * Last byte is error detection byte.
+ * Between eigth bytes include followings:
+ * 
+ * Button byte-1: X Y A B Up Down lb RB
+ * Button byte-2: Start Back XBox Left right Left-hat-press Right-hat-press 0
+ * LT
+ * RT
+ * Left-hat-x
+ * Left-hat-y
+ * Right-hat-x
+ * Right-hat-y
+*******************************************************************************/
+struct JoystickData
+{
+  uint8_t button1 = 0;
+  uint8_t button2 = 0;
+  uint8_t lt = 0;
+  uint8_t rt = 0;
+  int8_t l_hatx = 0;
+  int8_t l_haty = 0;
+  int8_t r_hatx = 0;
+  int8_t r_haty = 0;
+};
+
 
 /**
  * @class Robot
@@ -51,7 +80,8 @@ public:
 
     /* Components used by the Robot */
     DeadMotor deadMotor;             /**< Object for DeadMotor component. */
-    UartHS joystick{&JOYSTICK_UART}; /**< Object for UartHS component for joystick communication. */
+    UART joystick{&JOYSTICK_UART, 8, RECEIVING}; /**< Object for UartHS component for joystick communication. */
+    JoystickData joystickData;     /**< Joystick data received. */
     uint32_t robot_loop_tick = 0;    /**< Robot main loop counter. */
 
 private:
@@ -61,6 +91,7 @@ private:
      * @param joytick_data Joystick data for receive.
      */
     void set_state_from_joystick_data(const JoystickData &joytick_data);
+    
 
 /**
  * @brief Handles emergency braking.
@@ -69,7 +100,6 @@ private:
  */
     void EMERGENCY_BREAK();
 
-    JoystickData joystickData;     /**< Joystick data received. */
     uint32_t last_button_tick = 0; /**< Last button clicked tick. */
     uint32_t prev_button1 = 0;     /**< Previous state of button 1. */
     uint32_t prev_button2 = 0;     /**< Previous state of button 2. */

@@ -29,7 +29,7 @@ void Robot_main()
     while (1)
     {
         /* Run robot continuosly */
-            robot.run();
+        robot.run();
     }
 }
 
@@ -45,7 +45,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     if (huart->Instance == robot.joystick.huart->Instance)
     {
-        robot.joystick.RxCallback();
+        static uint32_t prevTick = 0;
+        uint32_t curTick = HAL_GetTick();
+
+        /* Toggle LED to indicate data recive */
+        if ((curTick - prevTick) > 50)
+        {
+            HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
+            prevTick = curTick;
+        }
+
+        robot.joystick.get_received_data((uint8_t *)(&robot.joystickData));
     }
     else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
     {

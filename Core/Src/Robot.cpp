@@ -24,7 +24,7 @@ void Robot::init()
     printf("robot init\n");
 #endif
 
-    joystick.Init();                 /**< Initialize joystick. */
+    joystick.init();                 /**< Initialize joystick. */
     deadMotor.init();                /**< Initialize motor and its components. */
     robot_loop_tick = HAL_GetTick(); /**< Store current tick into robot loop counter. */
 }
@@ -39,7 +39,7 @@ void Robot::run()
         // joystick.ShowData();
         // joystick.ShowPacket();
 #endif
-        joystick.GetData(joystickData);             /**< Get Joystick data for Robot control, */
+        // joystick.GetData(joystickData);             /**< Get Joystick data for Robot control, */
         set_state_from_joystick_data(joystickData); /**< Set the state of Robot based on joystick data. */
 
         // deadMotor.maintainCoordinates();
@@ -61,7 +61,7 @@ void Robot::run()
 void Robot::set_state_from_joystick_data(const JoystickData &jdata)
 {
 
-    if ((HAL_GetTick() - joystick.GetLastUpdateTick()) > 500)
+    if ((HAL_GetTick() - joystick.last_updated_tick) > 100)
     {
 #ifdef __DEBUG_MODE__
         printf("delayed data\n");

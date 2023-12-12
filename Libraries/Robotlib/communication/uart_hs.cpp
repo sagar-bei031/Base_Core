@@ -80,7 +80,7 @@ bool UartHS::VerifyPacket()
     {
 #ifdef __IMPLEMENT_CHECKSUM__
         /* Calculate checksum and compare */
-        uint8_t checksum = buffer[0];
+        uint8_t checksum = 0;
 
         for (int i = 1; i < (PACKET_SIZE - 1); i++)
         {
