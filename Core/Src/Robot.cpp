@@ -24,8 +24,9 @@ void Robot::init()
     printf("robot init\n");
 #endif
 
-    joystick.init();                 /**< Initialize joystick. */
     deadMotor.init();                /**< Initialize motor and its components. */
+    joystick.init();                      /**< Initialize joystick. */
+    ros.init();
     robot_loop_tick = HAL_GetTick(); /**< Store current tick into robot loop counter. */
 }
 
@@ -46,6 +47,8 @@ void Robot::run()
         // printf("vxp:: %lf  ", deadMotor.x_pid.Output);
         // printf("setpoint:: %.2f  %.2f  %.2f    ", round2(deadMotor.odom_setpoint.x * 100.0f), round2(deadMotor.odom_setpoint.y * 100.0f), round2(deadMotor.odom_setpoint.theta * 180.0f / PI));
         // printf("odom:: %.2f  %.2f  %.2f\n", round2(deadMotor.odom.x * 100.0f), round2(deadMotor.odom.y * 100.0f), round2(deadMotor.odom.theta * 180.0f / PI));
+
+        set_base_twist_from_recv_twist();
 
         deadMotor.run(); /**< Move robot base according to control data .*/
 
@@ -71,40 +74,40 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
         return;
     }
 
-    const uint8_t d_band = 50;
-    float v = 0, theta = deadMotor.base_twist.get_theta(), omega = 0;
+    // const uint8_t d_band = 50;
+    // float v = 0, theta = deadMotor.base_twist.get_theta(), omega = 0;
 
-    /**< Donot move robot base if joytick data is less than band. */
-    if (abs(jdata.l_hatx) < d_band && abs(jdata.l_haty) < d_band &&
-        jdata.lt < d_band && jdata.rt < d_band)
-    {
-        deadMotor.base_twist = Twist(0, theta, 0);
-    }
+    // /**< Donot move robot base if joytick data is less than band. */
+    // if (abs(jdata.l_hatx) < d_band && abs(jdata.l_haty) < d_band &&
+    //     jdata.lt < d_band && jdata.rt < d_band)
+    // {
+    //     deadMotor.base_twist = Twist(0, theta, 0);
+    // }
 
-    /**< Move robot base based on left joystick value. */
-    if (((abs(jdata.l_haty) > d_band) || (abs(jdata.l_hatx) > d_band)))
-    {
-        float magnitude = sqrt(pow(jdata.l_haty, 2) + pow(jdata.l_hatx, 2));
-        v = map<float>(magnitude, 0, 128, 0, MAXIMUM_VELOCITY);
-        theta = atan2(jdata.l_haty, jdata.l_hatx);
-    }
+    // /**< Move robot base based on left joystick value. */
+    // if (((abs(jdata.l_haty) > d_band) || (abs(jdata.l_hatx) > d_band)))
+    // {
+    //     float magnitude = sqrt(pow(jdata.l_haty, 2) + pow(jdata.l_hatx, 2));
+    //     v = map<float>(magnitude, 0, 128, 0, MAXIMUM_VELOCITY);
+    //     theta = atan2(jdata.l_haty, jdata.l_hatx);
+    // }
 
-    /**< Slow down rotation if LB is pressed. */
-    float speed_factor = 1.0;
-    if (jdata.button1 & _BV(B_LB))
-    {
-        speed_factor = 0.2;
-    }
+    // /**< Slow down rotation if LB is pressed. */
+    // float speed_factor = 1.0;
+    // if (jdata.button1 & _BV(B_LB))
+    // {
+    //     speed_factor = 0.2;
+    // }
 
-    /**< Rotate robot based on LT and RT value. */
-    if (jdata.lt > 30)
-    {
-        omega = map<float>(jdata.lt, 0, 255, 0, MAXIMUM_OMEGA * speed_factor);
-    }
-    else if (jdata.rt > 30)
-    {
-        omega = -map<float>(jdata.rt, 0, 255, 0, MAXIMUM_OMEGA * speed_factor);
-    }
+    // /**< Rotate robot based on LT and RT value. */
+    // if (jdata.lt > 30)
+    // {
+    //     omega = map<float>(jdata.lt, 0, 255, 0, MAXIMUM_OMEGA * speed_factor);
+    // }
+    // else if (jdata.rt > 30)
+    // {
+    //     omega = -map<float>(jdata.rt, 0, 255, 0, MAXIMUM_OMEGA * speed_factor);
+    // }
 
     // if ((HAL_GetTick() - last_button_tick) > 100)
     // {
@@ -151,8 +154,19 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
     }
 
     /**< Finally apply the states. */
-    deadMotor.base_twist = Twist::from_v_theta_omega(v, theta, omega);
+    // deadMotor.base_twist = Twist::from_v_theta_omega(v, theta, omega);
     // printf("v th w: %f %f %f\n", v, theta, omega);
+}
+
+void Robot::set_base_twist_from_recv_twist()
+{
+    if (ros.last_updated_tick > 100)
+    {
+        deadMotor.base_twist = Twist(0, 0, 0);
+        return;
+    }
+
+    deadMotor.base_twist = recv_twist;
 }
 
 /**

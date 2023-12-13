@@ -52,12 +52,28 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         /* Toggle LED to indicate data recive */
         if ((curTick - prevTick) > 50)
         {
-            HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
+            HAL_GPIO_TogglePin(ORANGE_LED_GPIO_Port, ORANGE_LED_Pin);
             prevTick = curTick;
         }
 
         robot.joystick.get_received_data((uint8_t *)(&robot.joystickData));
     }
+
+    else if (huart->Instance == robot.ros.huart->Instance)
+    {
+        static uint32_t prevTick = 0;
+        uint32_t curTick = HAL_GetTick();
+
+        /* Toggle LED to indicate data recive */
+        if ((curTick - prevTick) > 50)
+        {
+            HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
+            prevTick = curTick;
+        }
+
+        robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
+    }
+
     else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
     {
         if (robot.deadMotor.deadWheel.get_received_data(robot.deadMotor.odom_rx_data) == OK)

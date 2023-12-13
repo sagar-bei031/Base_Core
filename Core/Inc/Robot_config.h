@@ -14,7 +14,8 @@
 #include "tim.h"
 
 #define JOYSTICK_UART           (huart2)
-#define DEADWHEEL_UART          (huart4)
+#define ROS_UART                (huart4)
+#define DEADWHEEL_UART          (huart1)
 
 #define M1P_TIMER               (htim2)
 #define M2P_TIMER               (htim2)

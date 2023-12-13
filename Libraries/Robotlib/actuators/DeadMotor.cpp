@@ -157,10 +157,14 @@ void DeadMotor::run()
 //     odom_setpoint.theta = round3(odom_setpoint.theta);
 // }
 
-// void DeadMotor::stop()
-// {
-//     base_twist = Twist(0, 0, 0);
-// }
+void DeadMotor::stop()
+{
+    base_twist = Twist(0, 0, 0);
+    for (int i=0; i<4; ++i)
+    {
+        base_motors[i].set_speed(0.0f);
+    }
+}
 
 // void DeadMotor::hardBreak()
 // {

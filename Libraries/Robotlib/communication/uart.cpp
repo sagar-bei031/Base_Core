@@ -88,7 +88,7 @@ void UART::transmit(uint8_t *t_data)
     memcpy(&transmission_data[1], t_data, t_size);
 #if defined __IMPLEMENT_CRC__
     transmission_data[t_size + 1] = crc.get_Hash(transmission_data + 1, t_size);
-#else 
+#else
     transmission_data[t_size + 1] = get_checksum(transmission_data + 1, t_size);
 #endif
     transmission_data[t_size + 2] = '\n';
@@ -105,6 +105,17 @@ UARTStatus UART::get_received_data(uint8_t *r_data)
     }
     return HASH_DIDNT_MATCH;
 }
+
+uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
+{
+    uint8_t hash = data[0];
+    for (int i = 1; i < size; ++i)
+    {
+        hash += data[i];
+    }
+    return hash;
+}
+
 void display(uint8_t *data, uint8_t size)
 {
     for (int i = 0; i < size; i++)
