@@ -108,6 +108,8 @@ public:
    */
   void init();
 
+  void display();
+
 #ifndef __IMPLEMENT_CRC__
   uint8_t get_checksum(uint8_t* data, uint8_t size);
 #endif

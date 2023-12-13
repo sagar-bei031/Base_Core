@@ -69,15 +69,16 @@ UARTStatus UART::receive()
         uint8_t hash = get_checksum(receiving_data_dma, r_size);
 #endif
         HAL_UART_Receive_DMA(huart, &first_byte, 1);
-        if (hash == rem_byte)
-        {
+        // if (hash == rem_byte)
+        // {
             status = OK;
             return status;
-        }
-        else
-        {
-            status = HASH_DIDNT_MATCH;
-        }
+        // }
+        // else
+        // {
+            // printf("HASH_DIDNT_MATCH\n");
+            // status = HASH_DIDNT_MATCH;
+        // }
     }
     return status;
 }
@@ -116,11 +117,11 @@ uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
     return hash;
 }
 
-void display(uint8_t *data, uint8_t size)
+void UART::display()
 {
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < r_size; i++)
     {
-        printf("%d\t", data[i]);
+        printf("%d\t  ", receiving_data_dma[i]);
     }
-    printf("\n");
+    // printf("\n");
 }

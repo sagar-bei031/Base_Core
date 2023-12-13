@@ -48,6 +48,8 @@ void Robot::run()
         // printf("setpoint:: %.2f  %.2f  %.2f    ", round2(deadMotor.odom_setpoint.x * 100.0f), round2(deadMotor.odom_setpoint.y * 100.0f), round2(deadMotor.odom_setpoint.theta * 180.0f / PI));
         // printf("odom:: %.2f  %.2f  %.2f\n", round2(deadMotor.odom.x * 100.0f), round2(deadMotor.odom.y * 100.0f), round2(deadMotor.odom.theta * 180.0f / PI));
 
+        // ros.display();
+        printf("recv_twist:: %f, %f %f\n", recv_twist.vx, recv_twist.vy, recv_twist.w);
         set_base_twist_from_recv_twist();
 
         deadMotor.run(); /**< Move robot base according to control data .*/
@@ -160,11 +162,6 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
 
 void Robot::set_base_twist_from_recv_twist()
 {
-    if (ros.last_updated_tick > 100)
-    {
-        deadMotor.base_twist = Twist(0, 0, 0);
-        return;
-    }
 
     deadMotor.base_twist = recv_twist;
 }
@@ -181,6 +178,7 @@ void Robot::EMERGENCY_BREAK()
         for (int i = 0; i < 4; i++)
         {
             deadMotor.base_motors[i].set_speed(0.0);
+            HAL_GPIO_WritePin(RED_LED_GPIO_Port, RED_LED_Pin, GPIO_PIN_SET);
         }
     }
 }
