@@ -9,7 +9,7 @@
 #include "Robotlib/controllers/pid.hpp"
 #include "Robotlib/controllers/fuzzy_pid.hpp"
 #include "Robotlib/kinematics/omniwheel.hpp"
-#include "Robotlib/communication/uart.h"
+#include "Robotlib/communication/uart.hpp"
 
 #define MOTOR_LOOP_TIME 10
 

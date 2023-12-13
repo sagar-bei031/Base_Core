@@ -68,7 +68,6 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
 #endif
         /**< Stop robot if there is data delay for a second. */
         deadMotor.base_twist = Twist(0, 0, 0);
-        HAL_Delay(1000);
         return;
     }
 
@@ -146,7 +145,7 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
     // }
 
     /**< Stop and Abort if XBOX or PS4 button is pressed. */
-    if ((jdata.button2 & _BV(B_XBOX)) && (jdata.button1 & _BV(B_LB)))
+    if (jdata.button2 & _BV(B_XBOX))
     {
         EMERGENCY_BREAK();
     }
@@ -158,7 +157,7 @@ void Robot::set_state_from_joystick_data(const JoystickData &jdata)
 
 /**
  * @brief Handles emergency braking.
- * 
+ *
  * Stop robot and abort operation in case of emergency.
  */
 void Robot::EMERGENCY_BREAK()

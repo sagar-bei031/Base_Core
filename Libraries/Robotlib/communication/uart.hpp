@@ -107,6 +107,18 @@ public:
    * @brief Initialize UART communication
    */
   void init();
+
+#ifndef __IMPLEMENT_CRC__
+  uint8_t get_checksum(uint8_t* data, uint8_t size)
+  {
+    uint8_t hash = data[0];
+    for (int i=1; i<size; ++i)
+    {
+      hash += data[i];
+    }
+    return hash;
+  }
+#endif
 };
 
 #endif // !_UART_H_

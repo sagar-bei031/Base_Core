@@ -28,7 +28,7 @@
  *    ```
  * 2. Take new measurement
  *    ```
- *    measurement = newMeasurement
+ *    measurement = newMeasurement // fuse here
  *    ```
  * 
  * 3. Calculate Kalman Gain

@@ -28,7 +28,7 @@ public:
         int _pwm_timer_channel,
         uint16_t _direction_pin,
         bool _isChannelN = false,
-        int _pwm_full_signal = 20999, 
+        int _pwm_full_signal = 10499, 
         int _pwm_signal = 0,
         Direction _direction = ANTI_CLOCKWISE)
       : pwm_timer(_pwm_timer), 

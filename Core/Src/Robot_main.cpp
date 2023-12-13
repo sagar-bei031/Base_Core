@@ -10,6 +10,7 @@
 #include "Robot_main.h"
 #include "Robot.hpp"
 #include "usart.h"
+#include <memory.h>
 
 // #define __COUNT__
 

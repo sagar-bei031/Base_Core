@@ -96,7 +96,6 @@ int main(void)
   MX_TIM5_Init();
   MX_USART2_UART_Init();
   MX_UART4_Init();
-
   /* USER CODE BEGIN 2 */
   Robot_main();
   /* USER CODE END 2 */

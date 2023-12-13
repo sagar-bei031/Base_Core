@@ -14,7 +14,7 @@
 #include "definition.h"
 #include "Robot_config.h"
 #include "Robotlib/actuators/DeadMotor.hpp"
-#include "Robotlib/communication/uart.h"
+#include "Robotlib/communication/uart.hpp"
 
 #define ROBOT_LOOP_TIME 10
 

@@ -1,4 +1,4 @@
-#include "uart.h"
+#include "uart.hpp"
 #include "Robotlib/maths/math.hpp"
 #include <stdio.h>
 
@@ -34,7 +34,6 @@ void UART::init()
     last_updated_tick = HAL_GetTick();
 }
 
-
 UARTStatus UART::receive()
 {
     status = HASH_DIDNT_MATCH;
@@ -64,7 +63,11 @@ UARTStatus UART::receive()
     if (receive_state == WAITING_FOR_REM)
     {
         receive_state = WAITING_FOR_START_BYTE;
+#if defined __IMPLEMENT_CRC__
         uint8_t hash = crc.get_Hash(receiving_data_dma, r_size);
+#else
+        uint8_t hash = get_checksum(receiving_data_dma, r_size);
+#endif
         HAL_UART_Receive_DMA(huart, &first_byte, 1);
         if (hash == rem_byte)
         {
@@ -83,7 +86,11 @@ void UART::transmit(uint8_t *t_data)
 {
     transmission_data[0] = UART_START_BYTE;
     memcpy(&transmission_data[1], t_data, t_size);
+#if defined __IMPLEMENT_CRC__
     transmission_data[t_size + 1] = crc.get_Hash(transmission_data + 1, t_size);
+#else 
+    transmission_data[t_size + 1] = get_checksum(transmission_data + 1, t_size);
+#endif
     transmission_data[t_size + 2] = '\n';
     HAL_UART_Transmit_DMA(huart, transmission_data, t_size + 3);
 }

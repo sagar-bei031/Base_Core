@@ -4,9 +4,9 @@
 #define __KALMAN_H__
 
 /*
-    X = state vector (estimate)
-    W = preticted state noise matrix
-    U = control/input vector
+    X = state vector (estimate)   eee
+    W = preticted state noise matrix eee
+    U = control/input vector vx,vy,vz
 
     P = process covariance matrix (error in estimate)
     Q = process noise covariance matrix
@@ -17,8 +17,8 @@
     Y = actual measurement of state
     Z = measurement noise (due to sensor delay or instrumental error)
 
-    A = State transition matrix
-    B = Control transiton matrix
+    A = State transition matrix    ccc
+    B = Control transiton matrix   ccc
     C = measurement transition matrix
     H = Observation/measurement matrix depends on sensor data structure
     I = identity matrix
@@ -73,10 +73,12 @@ struct Kalman_InitStruct
     float32_t dT;                       // time difference between two calculation
 };
 
+
+
 template <uint16_t stateNum, uint16_t controlNum>
 class Kalman
 {
-public:
+private:
     const matrixf32_t<stateNum, stateNum> A;   // State transition matrix
     const matrixf32_t<stateNum, controlNum> B; // Control input transition matrix
     const matrixf32_t<stateNum, stateNum> Q;   // Process noise covariance matrix
