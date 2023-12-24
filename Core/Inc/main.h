@@ -65,10 +65,8 @@ void Error_Handler(void);
 #define M4P_GPIO_Port GPIOE
 #define M4D_Pin GPIO_PIN_14
 #define M4D_GPIO_Port GPIOC
-#define ENC4_C1_Pin GPIO_PIN_0
-#define ENC4_C1_GPIO_Port GPIOA
-#define ENC4_C2_Pin GPIO_PIN_1
-#define ENC4_C2_GPIO_Port GPIOA
+#define START_BTN_Pin GPIO_PIN_0
+#define START_BTN_GPIO_Port GPIOA
 #define M2P_Pin GPIO_PIN_3
 #define M2P_GPIO_Port GPIOA
 #define M1P_Pin GPIO_PIN_5
@@ -89,6 +87,10 @@ void Error_Handler(void);
 #define RED_LED_GPIO_Port GPIOD
 #define BLUE_LED_Pin GPIO_PIN_15
 #define BLUE_LED_GPIO_Port GPIOD
+#define ENC5_C1_Pin GPIO_PIN_6
+#define ENC5_C1_GPIO_Port GPIOC
+#define ENC5_C2_Pin GPIO_PIN_7
+#define ENC5_C2_GPIO_Port GPIOC
 #define ENC2_C1_Pin GPIO_PIN_4
 #define ENC2_C1_GPIO_Port GPIOB
 #define ENC2_C2_Pin GPIO_PIN_5

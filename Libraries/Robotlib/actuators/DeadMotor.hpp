@@ -38,10 +38,10 @@ public:
     void stop();
     void hardBreak();
 
-    UART deadWheel{&DEADWHEEL_UART, 12, RECEIVING};
+    // UART deadWheel{&DEADWHEEL_UART, 12, RECEIVING};
     Odometry odom{0, 0, 0};
     Odometry odom_setpoint{0, 0, 0};
-    uint8_t odom_rx_data[12];
+    // uint8_t odom_rx_data[12];
 
     Twist base_twist;
     Motor base_motors[4];

@@ -11,7 +11,7 @@
 #define DEFINITION_H__
 
 #define __DEBUG__       1
-#define __CRC__         0
+#define __CRC__         1
 
 /********************************************************************************
  * Defintion for implementation

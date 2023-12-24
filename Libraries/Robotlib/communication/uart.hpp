@@ -11,9 +11,10 @@
 
 #include "Robotlib/crypto/crc.hpp"
 #include "usart.h"
+#include "definition.h"
 
 #define UART_START_BYTE     0xA5 
-#define MAX_RECEIVING_DATA_SIZE   14  // Actual data size removed start byte and hash from packet.
+#define MAX_RECEIVING_DATA_SIZE   24  // Actual data size removed start byte and hash from packet.
 #define MAX_TRANSMIT_DATA_SIZE    1   // Actual data size removed start byte and hash from packet.
 
 /**
@@ -73,7 +74,7 @@ public:
 
   uint8_t first_byte = 0, rem_byte = 0; /**< Stored first and last bytes from UART */
 
-  uint8_t receiving_data_dma[MAX_RECEIVING_DATA_SIZE + 1]; /**< Array to receive data and hash from DMA */
+  uint8_t receiving_data_dma[MAX_RECEIVING_DATA_SIZE]; /**< Array to receive data*/
 
   uint8_t transmission_data[MAX_TRANSMIT_DATA_SIZE + 3]; /** Array to transmit start byte, data, hasg and line-feed (\n). */
   uint8_t r_size, t_size; /**< Sizes for received and transmitted data */

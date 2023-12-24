@@ -28,7 +28,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim9;
 
 /* TIM1 init function */
@@ -212,27 +212,28 @@ void MX_TIM4_Init(void)
   /* USER CODE END TIM4_Init 2 */
 
 }
-/* TIM5 init function */
-void MX_TIM5_Init(void)
+/* TIM8 init function */
+void MX_TIM8_Init(void)
 {
 
-  /* USER CODE BEGIN TIM5_Init 0 */
+  /* USER CODE BEGIN TIM8_Init 0 */
 
-  /* USER CODE END TIM5_Init 0 */
+  /* USER CODE END TIM8_Init 0 */
 
   TIM_Encoder_InitTypeDef sConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-  /* USER CODE BEGIN TIM5_Init 1 */
+  /* USER CODE BEGIN TIM8_Init 1 */
 
-  /* USER CODE END TIM5_Init 1 */
-  htim5.Instance = TIM5;
-  htim5.Init.Prescaler = 0;
-  htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 65535;
-  htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
+  /* USER CODE END TIM8_Init 1 */
+  htim8.Instance = TIM8;
+  htim8.Init.Prescaler = 0;
+  htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim8.Init.Period = 65535;
+  htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim8.Init.RepetitionCounter = 0;
+  htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
@@ -241,19 +242,19 @@ void MX_TIM5_Init(void)
   sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
   sConfig.IC2Filter = 0;
-  if (HAL_TIM_Encoder_Init(&htim5, &sConfig) != HAL_OK)
+  if (HAL_TIM_Encoder_Init(&htim8, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK)
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM5_Init 2 */
+  /* USER CODE BEGIN TIM8_Init 2 */
 
-  /* USER CODE END TIM5_Init 2 */
+  /* USER CODE END TIM8_Init 2 */
 
 }
 /* TIM9 init function */
@@ -374,29 +375,29 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
 
   /* USER CODE END TIM4_MspInit 1 */
   }
-  else if(tim_encoderHandle->Instance==TIM5)
+  else if(tim_encoderHandle->Instance==TIM8)
   {
-  /* USER CODE BEGIN TIM5_MspInit 0 */
+  /* USER CODE BEGIN TIM8_MspInit 0 */
 
-  /* USER CODE END TIM5_MspInit 0 */
-    /* TIM5 clock enable */
-    __HAL_RCC_TIM5_CLK_ENABLE();
+  /* USER CODE END TIM8_MspInit 0 */
+    /* TIM8 clock enable */
+    __HAL_RCC_TIM8_CLK_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**TIM5 GPIO Configuration
-    PA0-WKUP     ------> TIM5_CH1
-    PA1     ------> TIM5_CH2
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    /**TIM8 GPIO Configuration
+    PC6     ------> TIM8_CH1
+    PC7     ------> TIM8_CH2
     */
-    GPIO_InitStruct.Pin = ENC4_C1_Pin|ENC4_C2_Pin;
+    GPIO_InitStruct.Pin = ENC5_C1_Pin|ENC5_C2_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM5;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = GPIO_AF3_TIM8;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN TIM5_MspInit 1 */
+  /* USER CODE BEGIN TIM8_MspInit 1 */
 
-  /* USER CODE END TIM5_MspInit 1 */
+  /* USER CODE END TIM8_MspInit 1 */
   }
 }
 
@@ -533,23 +534,23 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
 
   /* USER CODE END TIM4_MspDeInit 1 */
   }
-  else if(tim_encoderHandle->Instance==TIM5)
+  else if(tim_encoderHandle->Instance==TIM8)
   {
-  /* USER CODE BEGIN TIM5_MspDeInit 0 */
+  /* USER CODE BEGIN TIM8_MspDeInit 0 */
 
-  /* USER CODE END TIM5_MspDeInit 0 */
+  /* USER CODE END TIM8_MspDeInit 0 */
     /* Peripheral clock disable */
-    __HAL_RCC_TIM5_CLK_DISABLE();
+    __HAL_RCC_TIM8_CLK_DISABLE();
 
-    /**TIM5 GPIO Configuration
-    PA0-WKUP     ------> TIM5_CH1
-    PA1     ------> TIM5_CH2
+    /**TIM8 GPIO Configuration
+    PC6     ------> TIM8_CH1
+    PC7     ------> TIM8_CH2
     */
-    HAL_GPIO_DeInit(GPIOA, ENC4_C1_Pin|ENC4_C2_Pin);
+    HAL_GPIO_DeInit(GPIOC, ENC5_C1_Pin|ENC5_C2_Pin);
 
-  /* USER CODE BEGIN TIM5_MspDeInit 1 */
+  /* USER CODE BEGIN TIM8_MspDeInit 1 */
 
-  /* USER CODE END TIM5_MspDeInit 1 */
+  /* USER CODE END TIM8_MspDeInit 1 */
   }
 }
 

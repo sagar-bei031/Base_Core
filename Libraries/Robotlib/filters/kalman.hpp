@@ -4,8 +4,8 @@
 #define __KALMAN_H__
 
 /*
-    X = state vector (estimate)   eee
-    W = preticted state noise matrix eee
+    X = state vector (estimate)
+    W = preticted state noise vector
     U = control/input vector vx,vy,vz
 
     P = process covariance matrix (error in estimate)
@@ -17,17 +17,17 @@
     Y = actual measurement of state
     Z = measurement noise (due to sensor delay or instrumental error)
 
-    A = State transition matrix    ccc
-    B = Control transiton matrix   ccc
+    A = State transition matrix
+    B = Control transiton matrix
     C = measurement transition matrix
     H = Observation/measurement matrix depends on sensor data structure
     I = identity matrix
 
 
-    X = A * X + B * U + W   
+    X = A * X + B * U + W
     P = A * P * A_T + Q
 
-    Y = C * Y + Z                   
+    Y = C * Y + Z
     K = P * H / (H * P * H_T + R)   [divide means inverse from right side]
     X = X + K * (Y - H * X)         [update with measurement]
     P = (I - K * H) * P
@@ -59,40 +59,40 @@ Vx = Vx + Ax*t
 #include "Robotlib/maths/matrixf32.h"
 #include <stdio.h>
 
-template <uint16_t stateNum, uint16_t controlNum>
+template <uint8_t stateNum, uint8_t controlNum, uint8_t measurementNum>
 struct Kalman_InitStruct
 {
-    float32_t A[stateNum * stateNum];   // State transition matrix
-    float32_t B[stateNum * controlNum]; // Control input transition matrix
-    float32_t Q[stateNum * stateNum];   // Process noise covariance matrix
-    float32_t H[stateNum * stateNum];   // Measurement matrix
-    float32_t R[stateNum * stateNum];   // Measurement noise covariance matrix
-    float32_t P[stateNum * stateNum];   // Process covariance matrix
-    float32_t x[stateNum * 1];          // state vector
-    float32_t u[controlNum * 1];        // control input vector
-    float32_t dT;                       // time difference between two calculation
+    float32_t A[stateNum * stateNum];               // State transition matrix
+    float32_t B[stateNum * controlNum];             // Control input transition matrix
+    float32_t w[stateNum * 1];                      // state noise vector
+    float32_t Q[stateNum * stateNum];               // Process noise covariance matrix
+    float32_t H[measurementNum * stateNum];         // Measurement matrix
+    float32_t R[measurementNum * measurementNum];   // Measurement noise covariance matrix
+    float32_t z[] float32_t P[stateNum * stateNum]; // Process covariance matrix
+    float32_t x[stateNum * 1];                      // state vector
+    float32_t u[controlNum * 1];                    // control input vector
+    float32_t dT;                                   // time difference between two calculation
 };
 
-
-
-template <uint16_t stateNum, uint16_t controlNum>
+template <uint8_t stateNum, uint8_t controlNum, uint8_t measurementNum>
 class Kalman
 {
 private:
-    const matrixf32_t<stateNum, stateNum> A;   // State transition matrix
-    const matrixf32_t<stateNum, controlNum> B; // Control input transition matrix
-    const matrixf32_t<stateNum, stateNum> Q;   // Process noise covariance matrix
-    const matrixf32_t<stateNum, stateNum> H;   // Measurement matrix
-    const matrixf32_t<stateNum, stateNum> R;   // Measurement noise covariance matrix
-    matrixf32_t<stateNum, stateNum> P;         // Process covariance matrix
-
-    matrixf32_t<stateNum, stateNum> K; // Kalman gain matrix
-    matrixf32_t<stateNum, stateNum> I; // Identity matrix
+    const matrixf32_t<stateNum, stateNum> A;             // State transition matrix
+    const matrixf32_t<stateNum, controlNum> B;           // Control input transition matrix
+    const matrixf32_t<stateNum, 1> w;                    // State noise vector
+    const matrixf32_t<stateNum, stateNum> Q;             // Process noise covariance matrix
+    const matrixf32_t<measurementNum, stateNum> H;       // Measurement matrix
+    const matrixf32_t<measurementNum, measurementNum> R; // Measurement noise covariance matrix
+    const matrixf32_t<measurementNum, 1> Z;              // Measurement noise vector
+    matrixf32_t<stateNum, stateNum> P;                   // Process covariance matrix
+    matrixf32_t<stateNum, stateNum> K;                   // Kalman gain matrix
+    matrixf32_t<stateNum, stateNum> I;                   // Identity matrix
 
 public:
-    matrixf32_t<stateNum, 1> x;   // state vector
-    matrixf32_t<controlNum, 1> u; // control input vector
-    matrixf32_t<stateNum, 1> y;   // measurement vector
+    matrixf32_t<stateNum, 1> x;       // state vector
+    matrixf32_t<controlNum, 1> u;     // control input vector
+    matrixf32_t<measurementNum, 1> y; // measurement vector
 
     float32_t dT; // time difference between two measurement
 
@@ -117,31 +117,22 @@ public:
     void update()
     {
         /* Predict state vector */
-        x = A * x + B * u;
-        printf("x:\n");
-        x.printData();
-        
+        x = A * x + B * u + w;
+
         /* Predict state covariance matrix */
         P = A * P * A.trans() + Q;
-        printf("P:\n");
-        P.printData();
 
         /* Calculate kalman gain */
         matrixf32_t<stateNum, stateNum> K_denom = H * P * H.trans() + R;
-        printf("K_denom:\n");
-        K_denom.printData();
         K = P * H * K_denom.inverse();
-        printf("K:\n");
-        K.printData();
 
+        y = C * y + z;
+
+        /* Update estimate */
         x = x + K * (y - H * x);
-        printf("x:\n");
-        x.printData();
 
         /* Update covariance matrix */
         P = (I - K * H) * P;
-        printf("P:\n");
-        P.printData();
     }
 
     /* As usual, but need not to do explicitly */

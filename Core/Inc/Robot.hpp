@@ -80,8 +80,8 @@ public:
     /* Components used by the Robot */
     DeadMotor deadMotor; /**< Object for DeadMotor component. */
 
-    UART joystick{&JOYSTICK_UART, 8, RECEIVING}; /**< Object for UartHS component for joystick communication. */
-    JoystickData joystickData;                   /**< Joystick data received. */
+    // UART joystick{&JOYSTICK_UART, 8, RECEIVING}; /**< Object for UartHS component for joystick communication. */
+    // JoystickData joystickData;                   /**< Joystick data received. */
 
     UART ros{&ROS_UART, 12, RECEIVING};
     Twist recv_twist;

@@ -24,8 +24,8 @@ void DeadMotor::init()
 {
     // 0: M1 -> E3
     // 1: M3 -> E2
-    // 2: M4 -> E4
-    // 3: M2 -> E1
+    // 2: M4 -> E1
+    // 3: M2 -> E5
 
     base_motors[0] = Motor(&M1P_TIMER, M1D_GPIO_Port, M1P_TIMER_CHANNEL, M1D_Pin);
     base_motors[1] = Motor(&M3P_TIMER, M3D_GPIO_Port, M3P_TIMER_CHANNEL, M3D_Pin);
@@ -34,8 +34,8 @@ void DeadMotor::init()
 
     base_motor_encoders[0] = Encoder(&ENC3_TIMER, cpr);
     base_motor_encoders[1] = Encoder(&ENC2_TIMER, cpr);
-    base_motor_encoders[2] = Encoder(&ENC4_TIMER, cpr);
-    base_motor_encoders[3] = Encoder(&ENC1_TIMER, cpr);
+    base_motor_encoders[2] = Encoder(&ENC1_TIMER, cpr);
+    base_motor_encoders[3] = Encoder(&ENC5_TIMER, cpr);
 
     for (int i = 0; i < 4; i++)
     {
@@ -71,7 +71,7 @@ void DeadMotor::init()
     theta_pid.SetSampleTime(MOTOR_LOOP_TIME);
     theta_pid.SetMode(AUTOMATIC);
 
-    deadWheel.init();
+    // deadWheel.init();
 
     motor_loop = HAL_GetTick();
 }

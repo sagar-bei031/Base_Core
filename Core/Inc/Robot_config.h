@@ -13,9 +13,9 @@
 #include "usart.h"
 #include "tim.h"
 
-#define JOYSTICK_UART           (huart2)
-#define ROS_UART                (huart4)
-#define DEADWHEEL_UART          (huart1)
+// #define JOYSTICK_UART           (huart2)
+#define ROS_UART                (huart2)
+// #define DEADWHEEL_UART          (huart1)
 
 #define M1P_TIMER               (htim2)
 #define M2P_TIMER               (htim2)
@@ -30,6 +30,6 @@
 #define ENC1_TIMER              (htim1)
 #define ENC2_TIMER              (htim3)
 #define ENC3_TIMER              (htim4)
-#define ENC4_TIMER              (htim5)
+#define ENC5_TIMER              (htim8)
 
 #endif // ROBOT_CONFIG_H__

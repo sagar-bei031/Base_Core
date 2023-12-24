@@ -69,16 +69,26 @@ UARTStatus UART::receive()
         uint8_t hash = get_checksum(receiving_data_dma, r_size);
 #endif
         HAL_UART_Receive_DMA(huart, &first_byte, 1);
-        // if (hash == rem_byte)
-        // {
+        if (hash == rem_byte)
+        {
             status = OK;
             return status;
-        // }
-        // else
-        // {
-            // printf("HASH_DIDNT_MATCH\n");
-            // status = HASH_DIDNT_MATCH;
-        // }
+        }
+        else
+        {
+            printf("HASH_DIDNT_MATCH\n");
+            status = HASH_DIDNT_MATCH;
+
+            static uint32_t prevTick = 0;
+            uint32_t curTick = HAL_GetTick();
+
+            /* Toggle LED to indicate data recive */
+            if ((curTick - prevTick) > 100)
+            {
+                HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+                prevTick = curTick;
+            }
+        }
     }
     return status;
 }
@@ -107,6 +117,7 @@ UARTStatus UART::get_received_data(uint8_t *r_data)
     return HASH_DIDNT_MATCH;
 }
 
+#ifdef __IMPLEMENT_CHECKSUM__
 uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
 {
     uint8_t hash = data[0];
@@ -116,6 +127,7 @@ uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
     }
     return hash;
 }
+#endif
 
 void UART::display()
 {
