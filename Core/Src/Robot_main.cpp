@@ -11,7 +11,7 @@
 #include "Robot.hpp"
 #include "usart.h"
 
-// #define __COUNT__
+#define __COUNT__
 
 /* Create main implementing object for Robot */
 Robot robot;
