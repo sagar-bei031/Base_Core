@@ -22,7 +22,7 @@ void Robot::init()
 {
     HAL_Delay(100);
 
-    while(!HAL_GPIO_ReadPin(START_BTN_GPIO_Port, START_BTN_Pin))
+    while (!HAL_GPIO_ReadPin(START_BTN_GPIO_Port, START_BTN_Pin))
     {
         __NOP();
     }
@@ -31,7 +31,7 @@ void Robot::init()
     printf("robot init\n");
 #endif
 
-    deadMotor.init();                /**< Initialize motor and its components. */
+    deadMotor.init(); /**< Initialize motor and its components. */
     // joystick.init();                      /**< Initialize joystick. */
     ros.init();
     robot_loop_tick = HAL_GetTick(); /**< Store current tick into robot loop counter. */
@@ -56,11 +56,11 @@ void Robot::run()
         // printf("odom:: %.2f  %.2f  %.2f\n", round2(deadMotor.odom.x * 100.0f), round2(deadMotor.odom.y * 100.0f), round2(deadMotor.odom.theta * 180.0f / PI));
 
         // ros.display();
-        printf("recv_twist:: %f, %f %f\n", recv_twist.vx, recv_twist.vy, recv_twist.w);
+        // printf("recv_twist:: %f, %f %f\n", recv_twist.vx, recv_twist.vy, recv_twist.w);
 
-        if (HAL_GetTick() - ros.last_updated_tick > 100)
-            deadMotor.base_twist = Twist(0,0,0);
-        else 
+        if (HAL_GetTick() - ros.last_updated_tick > 500)
+            deadMotor.base_twist = Twist(0, 0, 0);
+        else
             set_base_twist_from_recv_twist();
 
         deadMotor.run(); /**< Move robot base according to control data .*/

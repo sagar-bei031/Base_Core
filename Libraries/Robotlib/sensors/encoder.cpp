@@ -2,11 +2,11 @@
 #include "stm32f4xx.h"
 #include "stdio.h"
 
-int16_t Encoder::get_count(void)
+int32_t Encoder::get_count(void)
 {
   int32_t count = henc->Instance->CNT;
-  if (count > 32768)
-    count = count - 65535;
+  if (count > (int32_t)32768)
+    count = count - (int32_t)65536;
   return count;
 }
 
@@ -17,9 +17,9 @@ int64_t Encoder::get_count_aggregate(void)
 
 float Encoder::get_omega(void)
 {
-  int16_t count = get_count() - prevCount;
+  int32_t count = get_count() - prevCount;
   int32_t sample_time = HAL_GetTick() - last_reset_time;
-  omega = (2.0 * 3.14) * count / (ppr * ((float)sample_time / 1000.0));
+  omega = (2.0f * 3.141592f) * (float)count / ((float)ppr * (float)sample_time) * 1000.0f;
   prevCount = get_count();
   return omega;
 }

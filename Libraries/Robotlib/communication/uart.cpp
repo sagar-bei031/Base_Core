@@ -76,14 +76,16 @@ UARTStatus UART::receive()
         }
         else
         {
-            printf("HASH_DIDNT_MATCH\n");
+            printf("HASH_DIDNT_MATCH::");
+            printf("expected:%u received:%u\n", hash, rem_byte);
+
             status = HASH_DIDNT_MATCH;
 
             static uint32_t prevTick = 0;
             uint32_t curTick = HAL_GetTick();
 
             /* Toggle LED to indicate data recive */
-            if ((curTick - prevTick) > 100)
+            if ((curTick - prevTick) > 50)
             {
                 HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
                 prevTick = curTick;
@@ -123,7 +125,7 @@ uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
     uint8_t hash = data[0];
     for (int i = 1; i < size; ++i)
     {
-        hash += data[i];
+        hash ^= data[i]; // XOR based checksum
     }
     return hash;
 }

@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include "Robotlib/maths/math.hpp"
 
-const float kp[4] = {0.5f, 0.5f, 0.5f, 0.5f};
-const float ki[4] = {15.0f, 15.0f, 15.0f, 10.5f};
+const float kp[4] = {0.7f, 0.5f, 0.5f, 0.7f};
+const float ki[4] = {15.0f, 15.0f, 15.0f, 15.0f};
 const float kd[4] = {0.0001f, 0.0001f, 0.0001f, 0.0001f};
 
-const float desired_max_motor_omega = 50.0f; // Lies on linear region of all motor
+const float desired_max_motor_omega = 50.0f; // (rad/s) Lies on linear region of all motors
 const float pwm_for_desired_max_motor_omega[4] = {0.45f, 0.66f, 0.84f, 0.45f};
-const float cpr = 1000;
+const float cpr = 999;
 
 const float pos_kp = 5.0f;
 const float pos_ki = 0.0f;
@@ -80,26 +80,25 @@ void DeadMotor::run()
 {
     if ((HAL_GetTick() - motor_loop) >= MOTOR_LOOP_TIME)
     {
-
         omniwheel_kinematics.get_motor_omega(base_twist, motor_omegas);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; ++i)
         {
             base_motor_pid_controllers[i].Input = base_motor_encoders[i].get_omega();
 
-            // printf("%f ", base_motor_encoders[i].omega);
-            // printf("%ld   ", base_motor_encoders[i].count_aggregate);
+            printf("%f ", base_motor_encoders[i].omega);
+            // printf("%ld ", base_motor_encoders[i].count_aggregate);
 
             base_motor_pid_controllers[i].Setpoint = motor_omegas[i];
 
             if (base_motor_pid_controllers[i].Compute())
             {
                 base_motors[i].set_speed(base_motor_pid_controllers[i].Output / desired_max_motor_omega * pwm_for_desired_max_motor_omega[i]);
-                //  base_motors[i].set_speed(motor_omegas[i]/100);
+                //  base_motors[i].set_speed(0.1);
                 base_motor_encoders[i].reset_encoder_count();
             }
         }
-        // printf("\n");
+        printf("\n");
 
         motor_loop = HAL_GetTick();
     }

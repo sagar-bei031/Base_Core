@@ -59,35 +59,35 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     //     robot.joystick.get_received_data((uint8_t *)(&robot.joystickData));
     // }
 
-    // else 
+    // else
     if (huart->Instance == robot.ros.huart->Instance)
     {
         static uint32_t prevTick = 0;
         uint32_t curTick = HAL_GetTick();
 
         /* Toggle LED to indicate data recive */
-        if ((curTick - prevTick) > 100)
+        if ((curTick - prevTick) > 20)
         {
             HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
             prevTick = curTick;
         }
 
-        robot.ros.get_received_data((uint8_t *)(&robot.recv_twist)); 
+        robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
     }
 
-//     else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
-//     {
-//         if (robot.deadMotor.deadWheel.get_received_data(robot.deadMotor.odom_rx_data) == OK)
-//         {
-// #ifndef __COUNT__
-//             memcpy(&robot.deadMotor.odom, robot.deadMotor.odom_rx_data, 12);
-//             // printf("odom:: %f %f %f\n", robot.deadMotor.odom.x * 100.0f, robot.deadMotor.odom.y * 100.0f, robot.deadMotor.odom.theta * 180.0f / M_PI);
-// #endif
+    //     else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
+    //     {
+    //         if (robot.deadMotor.deadWheel.get_received_data(robot.deadMotor.odom_rx_data) == OK)
+    //         {
+    // #ifndef __COUNT__
+    //             memcpy(&robot.deadMotor.odom, robot.deadMotor.odom_rx_data, 12);
+    //             // printf("odom:: %f %f %f\n", robot.deadMotor.odom.x * 100.0f, robot.deadMotor.odom.y * 100.0f, robot.deadMotor.odom.theta * 180.0f / M_PI);
+    // #endif
 
-// #ifdef __COUNT__
-//             memcpy(odata, robot.deadMotor.odom_rx_data, 12);
-//             printf("odom:: %ld %ld %ld\n", odata[0], odata[1], odata[2]);
-// #endif
-//         }
-//     }
+    // #ifdef __COUNT__
+    //             memcpy(odata, robot.deadMotor.odom_rx_data, 12);
+    //             printf("odom:: %ld %ld %ld\n", odata[0], odata[1], odata[2]);
+    // #endif
+    //         }
+    //     }
 }
