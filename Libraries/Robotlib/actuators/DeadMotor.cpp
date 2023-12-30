@@ -2,23 +2,9 @@
 #include <stdio.h>
 #include "Robotlib/maths/math.hpp"
 
-const float kp[4] = {0.7f, 0.5f, 0.5f, 0.7f};
-const float ki[4] = {15.0f, 15.0f, 15.0f, 15.0f};
-const float kd[4] = {0.0001f, 0.0001f, 0.0001f, 0.0001f};
-
 const float desired_max_motor_omega = 50.0f; // (rad/s) Lies on linear region of all motors
 const float pwm_for_desired_max_motor_omega[4] = {0.45f, 0.66f, 0.84f, 0.45f};
 const float cpr = 999;
-
-const float pos_kp = 5.0f;
-const float pos_ki = 0.0f;
-const float pos_kd = 0.00f;
-const float pos_pid_limit = 1.0f; // full speed when greater or equal to 5m
-
-const float theta_kp = 5.0;
-const float theta_ki = 0.0;
-const float theta_kd = 0.000;
-const float theta_pid_limit = PI;
 
 void DeadMotor::init()
 {
@@ -50,29 +36,6 @@ void DeadMotor::init()
         base_motor_pid_controllers[i].SetMode(AUTOMATIC);
     }
 
-    x_pid = PID(1.0, 0.0, 0.0, P_ON_E, DIRECT);
-    x_pid.Init();
-    x_pid.SetOutputLimits(-pos_pid_limit, pos_pid_limit);
-    x_pid.SetTunings(pos_kp, pos_ki, pos_kd);
-    x_pid.SetSampleTime(MOTOR_LOOP_TIME);
-    x_pid.SetMode(AUTOMATIC);
-
-    y_pid = PID(1.0, 0.0, 0.0, P_ON_E, DIRECT);
-    y_pid.Init();
-    y_pid.SetOutputLimits(-pos_pid_limit, pos_pid_limit);
-    y_pid.SetTunings(pos_kp, pos_ki, pos_kd);
-    y_pid.SetSampleTime(MOTOR_LOOP_TIME);
-    y_pid.SetMode(AUTOMATIC);
-
-    theta_pid = PID(1.0, 0.0, 0.0, P_ON_E, DIRECT);
-    theta_pid.Init();
-    theta_pid.SetOutputLimits(-theta_pid_limit, theta_pid_limit);
-    theta_pid.SetTunings(theta_kp, theta_ki, theta_kd);
-    theta_pid.SetSampleTime(MOTOR_LOOP_TIME);
-    theta_pid.SetMode(AUTOMATIC);
-
-    // deadWheel.init();
-
     motor_loop = HAL_GetTick();
 }
 
@@ -86,7 +49,8 @@ void DeadMotor::run()
         {
             base_motor_pid_controllers[i].Input = base_motor_encoders[i].get_omega();
 
-            printf("%f ", base_motor_encoders[i].omega);
+            printf("%f ", motor_omegas[i]);
+            // printf("%f ", base_motor_encoders[i].omega);
             // printf("%ld ", base_motor_encoders[i].count_aggregate);
 
             base_motor_pid_controllers[i].Setpoint = motor_omegas[i];
@@ -103,72 +67,3 @@ void DeadMotor::run()
         motor_loop = HAL_GetTick();
     }
 }
-
-// float xVel = 0, yVel = 0, newOmega = 0;
-// void DeadMotor::maintainCoordinates()
-// {
-    
-//     theta_pid.Input = round4(odom.theta);
-//     theta_pid.Setpoint = odom_setpoint.theta;
-//     if (theta_pid.Compute())
-//     {
-//         newOmega = theta_pid.Output / pos_pid_limit * MAXIMUM_OMEGA;
-//     }
-
-//     x_pid.Input = round3(odom.x);
-//     x_pid.Setpoint = odom_setpoint.x;
-//     if (x_pid.Compute())
-//     {
-//         xVel = x_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
-//     }
-
-//     y_pid.Input = round3(odom.y);
-//     y_pid.Setpoint = odom_setpoint.y;
-//     if (y_pid.Compute())
-//     {
-//         yVel = y_pid.Output / pos_pid_limit * MAXIMUM_VELOCITY;
-//     }
-
-//     base_twist = Twist(xVel, yVel, newOmega);
-
-//     run();
-// }
-
-// void DeadMotor::changeCoordinates(float x, float y, float theta)
-// {
-//     odom_setpoint.x = x;
-//     odom_setpoint.y = y;
-//     odom_setpoint.theta = theta;
-// }
-
-// void DeadMotor::changeTheta(float newTheta)
-// {
-//     odom_setpoint.theta = newTheta;
-//     if (odom_setpoint.theta > M_PI)
-//     {
-//         odom_setpoint.theta -= 2 * M_PI;
-//     }
-//     else if (odom_setpoint.theta < (-M_PI))
-//     {
-//         odom_setpoint.theta += 2 * M_PI;
-//     }
-
-//     odom_setpoint.theta = round3(odom_setpoint.theta);
-// }
-
-void DeadMotor::stop()
-{
-    base_twist = Twist(0, 0, 0);
-    for (int i=0; i<4; ++i)
-    {
-        base_motors[i].set_speed(0.0f);
-    }
-}
-
-// void DeadMotor::hardBreak()
-// {
-//     for (int i = 0; i < 4; i++)
-//     {
-//         base_motors[i].set_speed(0.0);
-//     }
-// }

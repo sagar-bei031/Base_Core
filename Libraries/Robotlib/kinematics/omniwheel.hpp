@@ -4,9 +4,9 @@
 #include "math.h"
 
 const float motor_offsets[4] = {M_PI_4,
-                                3 * M_PI_4,
-                                5.0 * M_PI_4,
-                                7.0 * M_PI_4};
+                                3.0 * M_PI_4,
+                                -3.0 * M_PI_4,
+                                -M_PI_4};
 
 struct Twist
 {

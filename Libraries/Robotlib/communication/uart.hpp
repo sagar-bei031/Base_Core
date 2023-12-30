@@ -14,7 +14,7 @@
 #include "definition.h"
 
 #define UART_START_BYTE     0xA5 
-#define MAX_RECEIVING_DATA_SIZE   24  // Actual data size removed start byte and hash from packet.
+#define MAX_RECEIVING_DATA_SIZE   50  // Actual data size removed start byte and hash from packet.
 #define MAX_TRANSMIT_DATA_SIZE    1   // Actual data size removed start byte and hash from packet.
 
 /**
@@ -23,6 +23,7 @@
 enum UARTReceiveByteStatus
 {
   WAITING_FOR_START_BYTE, /**< Waiting for the start byte */
+  WAITING_FOR_LEN,
   RECEIVING_DATA,         /**< Receiving data */
   WAITING_FOR_REM         /**< Waiting for remaining data */
 };
@@ -35,6 +36,7 @@ enum UARTStatus
 {
   DISCONNECTED,         /**< UART disconnected status */
   HASH_DIDNT_MATCH,     /**< Hash mismatch status */
+  ID_DIDNT_MATCH,
   OK                    /**< Successful UART communication status */
 };
 
@@ -78,6 +80,9 @@ public:
 
   uint8_t transmission_data[MAX_TRANSMIT_DATA_SIZE + 3]; /** Array to transmit start byte, data, hasg and line-feed (\n). */
   uint8_t r_size, t_size; /**< Sizes for received and transmitted data */
+
+  uint8_t len;
+  uint8_t id;
 
   UARTReceiveByteStatus receive_state = WAITING_FOR_START_BYTE; /**< Current state of receiving */
 

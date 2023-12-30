@@ -41,8 +41,8 @@ UARTStatus UART::receive()
     {
         if (first_byte == UART_START_BYTE)
         {
-            HAL_UART_Receive_DMA(huart, receiving_data_dma, r_size);
-            receive_state = RECEIVING_DATA;
+            HAL_UART_Receive_DMA(huart, &len, 1);
+            receive_state = WAITING_FOR_LEN;
             first_byte = 0x00;
         }
         else
@@ -50,6 +50,19 @@ UARTStatus UART::receive()
             HAL_UART_Receive_DMA(huart, &first_byte, 1);
         }
 
+        return status;
+    }
+
+    if (receive_state == WAITING_FOR_LEN)
+    {
+        if (len > r_size)
+        {
+            HAL_UART_Receive_DMA(huart, &first_byte, 1);
+            receive_state = WAITING_FOR_START_BYTE;
+        }
+
+        HAL_UART_Receive_DMA(huart, receiving_data_dma, len);
+        receive_state = RECEIVING_DATA;
         return status;
     }
 
@@ -64,13 +77,14 @@ UARTStatus UART::receive()
     {
         receive_state = WAITING_FOR_START_BYTE;
 #if defined __IMPLEMENT_CRC__
-        uint8_t hash = crc.get_Hash(receiving_data_dma, r_size);
+        uint8_t hash = crc.get_Hash(receiving_data_dma, len);
 #else
-        uint8_t hash = get_checksum(receiving_data_dma, r_size);
+        uint8_t hash = get_checksum(receiving_data_dma, len);
 #endif
         HAL_UART_Receive_DMA(huart, &first_byte, 1);
         if (hash == rem_byte)
         {
+            id = receiving_data_dma[0];
             status = OK;
             return status;
         }
@@ -110,13 +124,10 @@ void UART::transmit(uint8_t *t_data)
 
 UARTStatus UART::get_received_data(uint8_t *r_data)
 {
-    if (this->receive() == OK)
-    {
-        memcpy(r_data, receiving_data_dma, r_size);
-        this->last_updated_tick = HAL_GetTick();
-        return OK;
-    }
-    return HASH_DIDNT_MATCH;
+
+    memcpy(r_data, receiving_data_dma + 1, len - 1);
+    this->last_updated_tick = HAL_GetTick();
+    return OK;
 }
 
 #ifdef __IMPLEMENT_CHECKSUM__

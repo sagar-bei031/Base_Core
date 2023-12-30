@@ -46,7 +46,7 @@ void UartHS::RxCallback()
     uint32_t curTick = HAL_GetTick();
 
     /* Toggle LED to indicate data recive */
-    if ((curTick - prevTick) > 50)
+    if ((curTick - prevTick) > 20)
     {
         HAL_GPIO_TogglePin(RX_CALLBACK_INDICATOR_Port, RX_CALLBACK_INDICATOR_Pin);
         prevTick = curTick;

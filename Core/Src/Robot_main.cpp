@@ -12,6 +12,12 @@
 #include "usart.h"
 #include <memory.h>
 
+enum RxID
+{
+    CMD_VEL,
+    PID_CFG
+};
+
 // #define __COUNT__
 
 /* Create main implementing object for Robot */
@@ -72,7 +78,23 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             prevTick = curTick;
         }
 
-        robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
+        // robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
+
+        if (robot.ros.receive() == OK)
+        {
+            if (robot.ros.id == CMD_VEL)
+            {
+                robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
+            }
+            else if (robot.ros.id == PID_CFG)
+            {
+                float t[12];
+                robot.ros.get_received_data((uint8_t*)t);
+                memcpy(robot.deadMotor.kp, t, 4);
+                memcpy(robot.deadMotor.ki, t+4, 4);
+                memcpy(robot.deadMotor.kd, t+8, 14);
+            }
+        }
     }
 
     //     else if (huart->Instance == robot.deadMotor.deadWheel.huart->Instance)
