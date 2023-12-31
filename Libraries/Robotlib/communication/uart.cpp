@@ -44,13 +44,13 @@ UARTStatus UART::receive()
             first_byte = 0x00;
             receive_state = WAITING_FOR_LEN;
             HAL_UART_Receive_DMA(huart, &len, 1);
-            printf("Start Byte ok\n");
+            // printf("Start Byte ok\n");
         }
         else
         {
             indicate_error();
             HAL_UART_Receive_DMA(huart, &first_byte, 1);
-            printf("Stat Byte Error\n");
+            // printf("Stat Byte Error\n");
         }
         return status;
     }
@@ -62,13 +62,13 @@ UARTStatus UART::receive()
             indicate_error();
             receive_state = WAITING_FOR_START_BYTE;
             HAL_UART_Receive_DMA(huart, &first_byte, 1);
-            printf("Len error:: len=%d\n", len);
+            // printf("Len error:: len=%d\n", len);
         }
         else
         {
             receive_state = RECEIVING_DATA;
             HAL_UART_Receive_DMA(huart, receiving_data_dma, len);
-            printf("len Ok:: len=%d\n", len);
+            // printf("len Ok:: len=%d\n", len);
         }
         return status;
     }
@@ -77,7 +77,7 @@ UARTStatus UART::receive()
     {
         receive_state = WAITING_FOR_REM;
         HAL_UART_Receive_DMA(huart, &rem_byte, 1);
-        printf("received data Ok\n");
+        // printf("received data Ok\n");
         return status;
     }
 
@@ -95,18 +95,18 @@ UARTStatus UART::receive()
         {
             id = receiving_data_dma[0];
             status = OK;
-            printf("Hash byte ok\n");
+            // printf("Hash byte ok\n");
         }
         else
         {
-            printf("HASH_DIDNT_MATCH::");
-            printf("expected:%u received:%u\n", hash, rem_byte);
+            // printf("HASH_DIDNT_MATCH::");
+            // printf("expected:%u received:%u\n", hash, rem_byte);
             indicate_error();
         }
         return status;
     }
 
-    printf("Blunder\n");
+    // printf("Blunder\n");
     return status;
 }
 

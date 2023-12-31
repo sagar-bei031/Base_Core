@@ -43,6 +43,14 @@ void DeadMotor::run()
 {
     if ((HAL_GetTick() - motor_loop) >= MOTOR_LOOP_TIME)
     {
+
+        printf("pid:: ");
+        for (int i = 0; i < 4; ++i)
+        {
+            printf("%f %f %f : ", kp[i], ki[i], kd[i]);
+        }
+        printf("\n");
+
         omniwheel_kinematics.get_motor_omega(base_twist, motor_omegas);
 
         for (int i = 0; i < 4; ++i)
