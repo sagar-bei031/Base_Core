@@ -107,6 +107,7 @@ private:
   GPIO_TypeDef *ERROR_INDICATOR_Port = RED_LED_GPIO_Port;
   uint16_t ERROR_INDICATOR_Pin = RED_LED_Pin;
 
+
 #ifdef __IMPLEMENT_CRC__
   CRC_Hash crc{CRC_POLYNOMIAL};
 #endif

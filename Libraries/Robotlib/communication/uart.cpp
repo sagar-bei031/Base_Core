@@ -41,71 +41,72 @@ UARTStatus UART::receive()
     {
         if (first_byte == UART_START_BYTE)
         {
-            HAL_UART_Receive_DMA(huart, &len, 1);
-            receive_state = WAITING_FOR_LEN;
             first_byte = 0x00;
+            receive_state = WAITING_FOR_LEN;
+            HAL_UART_Receive_DMA(huart, &len, 1);
+            printf("Start Byte ok\n");
         }
         else
         {
+            indicate_error();
             HAL_UART_Receive_DMA(huart, &first_byte, 1);
+            printf("Stat Byte Error\n");
         }
-
         return status;
     }
 
     if (receive_state == WAITING_FOR_LEN)
     {
-        if (len > r_size)
+        if ((len > r_size) || (len == 0U))
         {
-            HAL_UART_Receive_DMA(huart, &first_byte, 1);
+            indicate_error();
             receive_state = WAITING_FOR_START_BYTE;
+            HAL_UART_Receive_DMA(huart, &first_byte, 1);
+            printf("Len error:: len=%d\n", len);
         }
-
-        HAL_UART_Receive_DMA(huart, receiving_data_dma, len);
-        receive_state = RECEIVING_DATA;
+        else
+        {
+            receive_state = RECEIVING_DATA;
+            HAL_UART_Receive_DMA(huart, receiving_data_dma, len);
+            printf("len Ok:: len=%d\n", len);
+        }
         return status;
     }
 
     if (receive_state == RECEIVING_DATA)
     {
-        HAL_UART_Receive_DMA(huart, &rem_byte, 1);
         receive_state = WAITING_FOR_REM;
+        HAL_UART_Receive_DMA(huart, &rem_byte, 1);
+        printf("received data Ok\n");
         return status;
     }
 
     if (receive_state == WAITING_FOR_REM)
     {
-        receive_state = WAITING_FOR_START_BYTE;
 #if defined __IMPLEMENT_CRC__
         uint8_t hash = crc.get_Hash(receiving_data_dma, len);
 #else
         uint8_t hash = get_checksum(receiving_data_dma, len);
 #endif
+        receive_state = WAITING_FOR_START_BYTE;
         HAL_UART_Receive_DMA(huart, &first_byte, 1);
+
         if (hash == rem_byte)
         {
             id = receiving_data_dma[0];
             status = OK;
-            return status;
+            printf("Hash byte ok\n");
         }
         else
         {
             printf("HASH_DIDNT_MATCH::");
             printf("expected:%u received:%u\n", hash, rem_byte);
-
-            status = HASH_DIDNT_MATCH;
-
-            static uint32_t prevTick = 0;
-            uint32_t curTick = HAL_GetTick();
-
-            /* Toggle LED to indicate data recive */
-            if ((curTick - prevTick) > 50)
-            {
-                HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-                prevTick = curTick;
-            }
+            indicate_error();
         }
+        return status;
     }
+
+    printf("Blunder\n");
     return status;
 }
 
@@ -141,6 +142,19 @@ uint8_t UART::get_checksum(uint8_t *data, uint8_t size)
     return hash;
 }
 #endif
+
+void UART::indicate_error()
+{
+    static uint32_t prevTick = 0;
+    uint32_t curTick = HAL_GetTick();
+
+    /* Toggle LED to indicate data recive */
+    if ((curTick - prevTick) > 20)
+    {
+        HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+        prevTick = curTick;
+    }
+}
 
 void UART::display()
 {

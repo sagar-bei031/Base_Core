@@ -83,7 +83,7 @@ public:
     // UART joystick{&JOYSTICK_UART, 8, RECEIVING}; /**< Object for UartHS component for joystick communication. */
     // JoystickData joystickData;                   /**< Joystick data received. */
 
-    UART ros{&ROS_UART, 12, RECEIVING};
+    UART ros{&ROS_UART, 49, RECEIVING};
     Twist recv_twist;
 
     uint32_t robot_loop_tick = 0; /**< Robot main loop counter. */

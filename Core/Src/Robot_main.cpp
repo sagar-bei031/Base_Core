@@ -11,6 +11,7 @@
 #include "Robot.hpp"
 #include "usart.h"
 #include <memory.h>
+#include <stdio.h>
 
 enum RxID
 {
@@ -71,7 +72,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         static uint32_t prevTick = 0;
         uint32_t curTick = HAL_GetTick();
 
-        /* Toggle LED to indicate data recive */
+        /* Toggle LED to indicate data receive */
         if ((curTick - prevTick) > 20)
         {
             HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
@@ -82,18 +83,21 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
         if (robot.ros.receive() == OK)
         {
-            if (robot.ros.id == CMD_VEL)
-            {
-                robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
-            }
-            else if (robot.ros.id == PID_CFG)
-            {
-                float t[12];
-                robot.ros.get_received_data((uint8_t*)t);
-                memcpy(robot.deadMotor.kp, t, 4);
-                memcpy(robot.deadMotor.ki, t+4, 4);
-                memcpy(robot.deadMotor.kd, t+8, 14);
-            }
+            // printf("ok ");
+            // if (robot.ros.id == CMD_VEL)
+            // {
+            //     robot.ros.get_received_data((uint8_t *)(&robot.recv_twist));
+            //     printf("id:: %d\n", robot.ros.id);
+            // }
+            // else if (robot.ros.id == PID_CFG)
+            // {
+            //     float t[12];
+            //     robot.ros.get_received_data((uint8_t*)t);
+            //     memcpy((uint8_t*)robot.deadMotor.kp, (uint8_t*)t, 4*sizeof(float));
+            //     memcpy((uint8_t*)robot.deadMotor.ki, (uint8_t*)t+4, 4*sizeof(float));
+            //     memcpy((uint8_t*)robot.deadMotor.kd, (uint8_t*)t+8, 4*sizeof(float));
+            //     printf("id:: %d\n", robot.ros.id);
+            // }
         }
     }
 

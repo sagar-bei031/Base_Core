@@ -49,7 +49,7 @@ void DeadMotor::run()
         {
             base_motor_pid_controllers[i].Input = base_motor_encoders[i].get_omega();
 
-            printf("%f ", motor_omegas[i]);
+            // printf("%f ", motor_omegas[i]);
             // printf("%f ", base_motor_encoders[i].omega);
             // printf("%ld ", base_motor_encoders[i].count_aggregate);
 
@@ -62,7 +62,7 @@ void DeadMotor::run()
                 base_motor_encoders[i].reset_encoder_count();
             }
         }
-        printf("\n");
+        // printf("\n");
 
         motor_loop = HAL_GetTick();
     }
