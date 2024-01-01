@@ -41,7 +41,7 @@ public:
     Encoder base_motor_encoders[4];
 
     float motor_omegas[4] = {0, 0, 0, 0};
-    float kp[4] = {0.7f, 0.f, 0.5f, 0.7f};
+    float kp[4] = {0.7f, 0.5f, 0.5f, 0.7f};
     float ki[4] = {15.0f, 15.0f, 15.0f, 15.0f};
     float kd[4] = {0.0001f, 0.0001f, 0.0001f, 0.0001f};
 };
