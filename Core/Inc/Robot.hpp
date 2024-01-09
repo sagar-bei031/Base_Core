@@ -18,35 +18,6 @@
 
 #define ROBOT_LOOP_TIME 10
 
-/******************************************************************************
- * Joystick data structure
- *
- * There are ten bytes in a packet of control data.
- * First byte is start byte.
- * Last byte is error detection byte.
- * Between eigth bytes include followings:
- *
- * Button byte-1: X Y A B Up Down lb RB
- * Button byte-2: Start Back XBox Left right Left-hat-press Right-hat-press 0
- * LT
- * RT
- * Left-hat-x
- * Left-hat-y
- * Right-hat-x
- * Right-hat-y
- *******************************************************************************/
-struct JoystickData
-{
-    uint8_t button1 = 0;
-    uint8_t button2 = 0;
-    uint8_t lt = 0;
-    uint8_t rt = 0;
-    int8_t l_hatx = 0;
-    int8_t l_haty = 0;
-    int8_t r_hatx = 0;
-    int8_t r_haty = 0;
-};
-
 /**
  * @class Robot
  * @brief Manages robot functionalities.
@@ -90,24 +61,11 @@ public:
 
 private:
     /**
-     * @brief Sets robot state based on joystick data.
-     *
-     * @param joytick_data Joystick data for receive.
-     */
-    void set_state_from_joystick_data(const JoystickData &joytick_data);
-
-    void set_base_twist_from_recv_twist();
-
-    /**
      * @brief Handles emergency braking.
      *
      * Stop robot and abort operation in case of emergency.
      */
     void EMERGENCY_BREAK();
-
-    uint32_t last_button_tick = 0; /**< Last button clicked tick. */
-    uint32_t prev_button1 = 0;     /**< Previous state of button 1. */
-    uint32_t prev_button2 = 0;     /**< Previous state of button 2. */
 };
 
 #endif // __ROBOT

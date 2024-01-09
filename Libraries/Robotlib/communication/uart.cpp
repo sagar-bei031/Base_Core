@@ -76,8 +76,8 @@ UARTStatus UART::receive()
         }
         else
         {
-            printf("HASH_DIDNT_MATCH::");
-            printf("expected:%u received:%u\n", hash, rem_byte);
+            // printf("HASH_DIDNT_MATCH::");
+            // printf("expected:%u received:%u\n", hash, rem_byte);
 
             status = HASH_DIDNT_MATCH;
 
@@ -137,5 +137,5 @@ void UART::display()
     {
         printf("%d\t  ", receiving_data_dma[i]);
     }
-    // printf("\n");
+    printf("\n");
 }
